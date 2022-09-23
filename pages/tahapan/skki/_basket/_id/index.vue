@@ -173,17 +173,17 @@ export default {
             {
               text: 'Tahapan',
               disabled: false,
-              href: '/tahapan',
+              href: '/',
             },
             {
               text: 'SKKI',
               disabled: false,
-              href: '/tahapan/skki/1',
+              href: '/tahapan/skki/'+this.$route.params.basket,
             },
             {
               text: res.data.data.nomor_prk_skki,
               disabled: true,
-              href: '/tahapan/skki/'+res.data.data.id,
+              href: '/tahapan/skki/'+this.$route.params.basket+'/'+this.$route.params.id,
             }
           ];
 

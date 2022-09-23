@@ -14,10 +14,9 @@
           <v-list three-line>
             <template v-for="item in items">
               <v-divider
-                :key="item.id"
                 inset
               ></v-divider>
-              <v-list-item :key="item.id+'-list'">
+              <v-list-item>
                 <v-list-item-avatar>
                   <v-img :src="item.user.avatar"></v-img>
                 </v-list-item-avatar>
@@ -97,17 +96,17 @@ export default {
             {
               text: 'Tahapan',
               disabled: false,
-              href: '/tahapan',
+              href: '/',
             },
             {
               text: 'SKKI',
               disabled: false,
-              href: '/tahapan/skki/1',
+              href: '/tahapan/skki/'+this.$route.params.basket,
             },
             {
               text: res.data.data.nomor_prk_skki,
               disabled: true,
-              href: '/tahapan/skki/'+res.data.data.id,
+              href: '/tahapan/skki/'+this.$route.params.basket+'/'+this.$route.params.id,
             }
           ];
 
