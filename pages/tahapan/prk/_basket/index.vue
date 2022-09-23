@@ -106,6 +106,8 @@
               label="Nomor PRK"
               class="mb-3 rounded-lg"
               v-model="create_data.nomor_prk"
+              :error="create_data_error.nomor_prk"
+              :error-messages="create_data_error.nomor_prk"
           ></v-text-field>
           <v-text-field
               outlined
@@ -132,8 +134,16 @@
             dense
             hide-details="auto"
             type="number"
-            class="rounded-lg"
+            class="rounded-lg mb-3"
           ></v-select>
+          <v-select 
+            :items="[{value: 1, text: 'MURNI'}, {value: 2, text: 'LUNCURAN'}]" 
+            label="Tipe" 
+            hide-details="auto" 
+            dense 
+            v-model="create_data.type"
+            class="rounded-lg"
+            outlined></v-select>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -228,7 +238,12 @@ export default {
         nomor_prk: '',
         nama_project: '',
         nomor_lot: '',
-        prioritas: ''
+        prioritas: '',
+        type: 1
+      },
+
+      create_data_error: {
+        nomor_prk: null,
       },
 
       create_dialog: false,
@@ -258,6 +273,11 @@ export default {
         return this.getData();
       }
 
+      // reset error
+      this.create_data_error = {
+        nomor_prk: null
+      }
+
       this.create_data.basket = this.$route.params.basket;
       this.$axios.post(`/v1/prk`, this.create_data)
         .then(res => {
@@ -267,7 +287,8 @@ export default {
             nomor_prk: '',
             nama_project: '',
             nomor_lot: '',
-            prioritas: ''
+            prioritas: '',
+            type: 1
           }
 
           this.create_dialog = false;
@@ -277,7 +298,20 @@ export default {
           return this.getData();
         })
         .catch(e => {
-          this.snackbar_text = 'Terjadi kesalahan.';
+          switch (e.response.status) {
+            case 400:
+              this.snackbar_text = e.response.status.message;
+              break;
+            case 422:
+              this.create_data_error = e.response.data
+              this.snackbar_text = 'Periksa kembali data Anda.';
+              break;
+            case 500:
+              this.snackbar_text = 'Terjadi kesalahan.';
+            default:
+              break;
+          }
+          
           this.snackbar = true;
         })
     },
@@ -286,7 +320,8 @@ export default {
         nomor_prk: '',
         nama_project: '',
         nomor_lot: '',
-        prioritas: ''
+        prioritas: '',
+        type: 1
       }
 
       this.create_dialog = false
