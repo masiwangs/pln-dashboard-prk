@@ -171,17 +171,17 @@ export default {
           {
             text: 'Tahapan',
             disabled: false,
-            href: '/tahapan',
+            href: '/',
           },
           {
             text: 'PRK',
             disabled: false,
-            href: '/tahapan/prk',
+            href: '/tahapan/prk/'+this.$route.params.basket,
           },
           {
             text: res.data.data.nomor_prk,
             disabled: true,
-            href: '/tahapan/prk/'+res.data.data.id,
+            href: '/tahapan/prk/'+this.$route.params.basket+'/'+this.$route.params.id,
           }
         ];
 

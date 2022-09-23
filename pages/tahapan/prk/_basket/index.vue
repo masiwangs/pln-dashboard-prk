@@ -196,12 +196,12 @@ export default {
         {
           text: 'Tahapan',
           disabled: false,
-          href: '/tahapan',
+          href: '/',
         },
         {
           text: 'PRK',
           disabled: true,
-          href: 'breadcrumbs_link_2',
+          href: '/tahapan/prk/1',
         },
       ],
 

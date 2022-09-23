@@ -12,12 +12,11 @@
       >
         <v-card-text style="max-height: 500px; overflow-y: auto">
           <v-list three-line>
-            <template v-for="item in items">
+            <template v-for="(item, index) in items">
               <v-divider
-                :key="item.id"
                 inset
               ></v-divider>
-              <v-list-item :key="item.id+'-list'">
+              <v-list-item>
                 <v-list-item-avatar>
                   <v-img :src="item.user.avatar"></v-img>
                 </v-list-item-avatar>
@@ -97,17 +96,17 @@ export default {
             {
               text: 'Tahapan',
               disabled: false,
-              href: '/tahapan',
+              href: '/',
             },
             {
               text: 'PRK',
               disabled: false,
-              href: '/tahapan/prk',
+              href: '/tahapan/prk/'+this.$route.params.basket,
             },
             {
               text: res.data.data.nomor_prk,
               disabled: true,
-              href: '/tahapan/prk/'+res.data.data.id,
+              href: '/tahapan/prk/'+this.$route.params.basket+'/'+this.$route.params.id,
             }
           ];
 
