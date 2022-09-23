@@ -65,32 +65,45 @@
               </v-col>
             </v-row>
             <v-row>
-            <v-col cols="12" sm="6" lg="4">
-                <v-text-field
+              <v-col cols="12" sm="6" lg="4">
+                  <v-text-field
+                    outlined
+                    hide-details="auto"
+                    dense
+                    label="Nomor WBS Jasa"
+                    v-model="item.nomor_wbs_jasa"
+                    v-debounce="updateData"
+                    :disabled="disabled"
+                    class="rounded-lg"
+                  ></v-text-field>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="12" sm="6" lg="4">
+                  <v-text-field
                   outlined
                   hide-details="auto"
                   dense
-                  label="Nomor WBS Jasa"
-                  v-model="item.nomor_wbs_jasa"
+                  label="Nomor WBS Material"
+                  v-model="item.nomor_wbs_material"
                   v-debounce="updateData"
                   :disabled="disabled"
                   class="rounded-lg"
-                ></v-text-field>
-            </v-col>
+                  ></v-text-field>
+              </v-col>
             </v-row>
             <v-row>
-            <v-col cols="12" sm="6" lg="4">
-                <v-text-field
-                outlined
-                hide-details="auto"
-                dense
-                label="Nomor WBS Material"
-                v-model="item.nomor_wbs_material"
-                v-debounce="updateData"
-                :disabled="disabled"
+              <v-col cols="12" sm="6" lg="4">
+                <v-select 
+                :items="[{value: 1, text: 'MURNI'}, {value: 2, text: 'LUNCURAN'}]" 
+                label="Tipe" 
+                hide-details="auto" 
+                dense 
+                v-model="item.type"
                 class="rounded-lg"
-                ></v-text-field>
-            </v-col>
+                @change="updateData"
+                outlined></v-select>
+              </v-col>
             </v-row>
             <v-row>
             <v-col cols="12" sm="6" lg="4">
@@ -207,6 +220,7 @@ export default {
         nama_project: this.item.nama_project,
         nomor_wbs_jasa: this.item.nomor_wbs_jasa,
         nomor_wbs_material: this.item.nomor_wbs_material,
+        type: this.item.type,
       }
       this.disabled = true;
       this.$axios.post(`/v1/skki/${this.$route.params.id}`, data)

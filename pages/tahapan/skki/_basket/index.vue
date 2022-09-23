@@ -59,6 +59,9 @@
           {{ item.nama_project }}
         </nuxt-link>
       </template>
+      <template v-slot:item.type="{ item }">
+        {{ item.type == 1 ? 'MURNI' : 'LUNCURAN' }}
+      </template>
       <template v-slot:item.rab_j="{ item }">
         Rp{{ item.rab_jasa ? new Intl.NumberFormat('id-ID').format(item.rab_jasa.total) : 0 }}
       </template>
@@ -84,7 +87,7 @@
               hide-details="auto"
               dense
               label="Nomor SKKI"
-              class="mb-3"
+              class="mb-3 rounded-lg"
               v-model="create_data.nomor_skki"
           ></v-text-field>
           <v-text-field
@@ -92,15 +95,17 @@
               hide-details="auto"
               dense
               label="Nomor PRK-SKKI"
-              class="mb-3"
+              class="mb-3 rounded-lg"
               v-model="create_data.nomor_prk_skki"
+              :error="create_data_error.nomor_prk_skki"
+              :error-messages="create_data_error.nomor_prk_skki"
           ></v-text-field>
           <v-text-field
               outlined
               hide-details="auto"
               dense
               label="Nama Project"
-              class="mb-3"
+              class="mb-3 rounded-lg"
               v-model="create_data.nama_project"
           ></v-text-field>
           <v-text-field
@@ -108,7 +113,7 @@
               hide-details="auto"
               dense
               label="Nomor WBS Jasa"
-              class="mb-3"
+              class="mb-3 rounded-lg"
               v-model="create_data.nomor_wbs_jasa"
           ></v-text-field>
           <v-text-field
@@ -116,9 +121,17 @@
               hide-details="auto"
               dense
               label="Nomor WBS Material"
-              class="mb-3"
+              class="mb-3 rounded-lg"
               v-model="create_data.nomor_wbs_material"
           ></v-text-field>
+          <v-select 
+            :items="[{value: 1, text: 'MURNI'}, {value: 2, text: 'LUNCURAN'}]" 
+            label="Tipe" 
+            hide-details="auto" 
+            dense 
+            v-model="create_data.type"
+            class="rounded-lg"
+            outlined></v-select>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -194,6 +207,10 @@ export default {
           value: 'nomor_prk_skki',
         },
         {
+          text: 'Tipe',
+          value: 'type',
+        },
+        {
           text: 'RAB Jasa',
           value: 'rab_j',
         },
@@ -204,6 +221,8 @@ export default {
       ],
 
       create_data: {},
+
+      create_data_error: {},
 
       create_dialog: false,
       prioritas_options: [1, 2, 3, 4],
@@ -232,6 +251,23 @@ export default {
           this.create_data = {}
           this.create_dialog = false
           this.$router.push('/tahapan/skki/'+this.basket_no+'/'+res.data.data.id)
+        })
+        .catch(e => {
+          switch (e.response.status) {
+            case 400:
+              this.snackbar_text = e.response.status.message;
+              break;
+            case 422:
+              this.create_data_error = e.response.data
+              this.snackbar_text = 'Periksa kembali data Anda.';
+              break;
+            case 500:
+              this.snackbar_text = 'Terjadi kesalahan.';
+            default:
+              break;
+          }
+          
+          this.snackbar = true;
         })
     },
     createCancel() {
