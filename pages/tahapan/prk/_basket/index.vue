@@ -75,6 +75,9 @@
           {{ item.nama_project }}
         </nuxt-link>
       </template>
+      <template v-slot:item.type="{ item }">
+        {{ item.type == 1 ? 'MURNI' : 'LUNCURAN' }}
+      </template>
       <template v-slot:item.rab_j="{ item }">
         Rp{{ item.rab_jasa ? new Intl.NumberFormat('id-ID').format(item.rab_jasa.rab_jasa) : 0 }}
       </template>
@@ -206,6 +209,10 @@ export default {
         {
           text: 'Nomor PRK',
           value: 'nomor_prk',
+        },
+        {
+          text: 'Tipe',
+          value: 'type',
         },
         {
           text: 'RAB Jasa',
