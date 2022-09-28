@@ -44,6 +44,9 @@
       <template v-slot:item.direksi="{ item }">
         {{ parseDireksi(item.direksi) }}
       </template>
+      <template v-slot:item.type="{ item }">
+        {{ item.type == 1 ? 'MURNI' : 'LUNCURAN' }}
+      </template>
     </v-data-table>
   </v-card>
 </div>
@@ -103,6 +106,10 @@ export default {
           text: 'Direksi',
           value: 'direksi',
         },
+        {
+          text: 'Tipe',
+          value: 'type',
+        },
       ]
     }
   },
@@ -127,7 +134,7 @@ export default {
         'PEMASARAN',
         'KEUANGAN DAN UMUM',
         'K3L'];
-      return direksi_array[direksi+1];
+      return direksi_array[direksi-1];
     }
   }
 }

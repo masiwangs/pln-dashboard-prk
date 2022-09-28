@@ -1,5 +1,16 @@
 <template>
   <div v-if="hasPermission">
+    <!-- snackbar start -->
+    <v-snackbar v-model="snackbar" top right>
+      {{ snackbar_text }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="white" icon v-bind="attrs" @click="snackbar = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </template>
+    </v-snackbar>
+    <!-- snackbar end -->
+
     <breadcrumbs :items="breadcrumbs_items" />
     <page-title :item="page_title"/>
 
@@ -80,7 +91,9 @@ export default {
     return {
       breadcrumbs_items: [],
       page_title: {},
-      delete_dialog: false
+      delete_dialog: false,
+      snackbar: false,
+      snackbar_text: ''
     }
   },
   created() {
@@ -127,7 +140,13 @@ export default {
         .then(res => {
           this.$router.push('/tahapan/pengadaan/'+this.$route.params.basket)
         })
-        .finally(() => {})
+        .catch(e => {
+          this.snackbar_text = e.response.data.message;
+          this.snackbar = true;
+        })
+        .finally(() => {
+          this.delete_dialog = false;
+        })
     } 
   },
   computed: {

@@ -51,6 +51,19 @@
           </v-row>
           <v-row>
             <v-col cols="12" sm="6" lg="4">
+              <v-select 
+                  :items="[{value: 1, text: 'MURNI'}, {value: 2, text: 'LUNCURAN'}]" 
+                  label="Tipe" 
+                  hide-details="auto" 
+                  dense 
+                  v-model="item.type"
+                  :disabled="disabled" 
+                  @change="updateData"
+                  outlined></v-select>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col cols="12" sm="6" lg="4">
               <v-text-field outlined hide-details="auto" class="rounded-lg" dense label="Total RAB Jasa" readonly prefix="Rp"
                 :value="item.wbs_jasa ? new Intl.NumberFormat('id-ID').format(item.wbs_jasa.total) : 0"></v-text-field>
             </v-col>
@@ -210,8 +223,13 @@ export default {
   mounted() {
     this.id = this.$route.params.id;
     this.getData()
-    this.$axios.get(`/v1/pengadaan/${this.$route.params.id}`)
+  },
+  methods: {
+    getData() {
+      this.$axios.get(`/v1/pengadaan/${this.$route.params.id}`)
         .then(res => {
+          this.item = res.data.data
+          
           this.breadcrumbs_items = [{
               text: 'Dashboard',
               disabled: false,
@@ -225,29 +243,20 @@ export default {
             {
               text: 'Pengadaan',
               disabled: false,
-              href: '/tahapan/pengadaan/1',
+              href: '/tahapan/pengadaan/'+this.$route.params.basket,
             },
             {
               text: res.data.data.nodin,
               disabled: true,
-              href: '/tahapan/pengadaan/'+res.data.data.id,
+              href: '/tahapan/pengadaan/'+this.$route.params.basket+'/'+this.$route.params.id,
             }
           ];
 
           this.page_title = {
-            basket      : res.data.data.basket,
-            title       : res.data.data.nodin,
-            description : res.data.data.nama_project
-          }
-        })
-  },
-  methods: {
-    getData() {
-      this.$axios.get(`/v1/pengadaan/${this.id}`)
-        .then(res => {
-          this.item = res.data.data
-          this.breadcrumbItems[3].text = this.item.nama_project
-          this.breadcrumbItems[3].href = '/tahapan/pengadaan/'+this.item.id
+          basket      : this.$route.params.basket,
+          title       : res.data.data.nodin,
+          description : res.data.data.nama_project
+        }
         })
         .finally(() => {})
     },
@@ -262,23 +271,31 @@ export default {
         nodin         : this.item.nodin,
         tanggal_nodin : this.item.tanggal_nodin,
         nama_project  : this.item.nama_project,
-        nomor_pr_jasa : this.item.nomor_pr_jasa
+        nomor_pr_jasa : this.item.nomor_pr_jasa,
+        status        : this.item.status,
+        type          : this.item.type,
       }
       this.disabled = true;
       this.$axios.post(`/v1/pengadaan/${id}`, data)
         .then(res => {
-          this.getData()
+          // this.getData()
+          this.snackbar_text = 'Pengadaan berhasil disimpan.';
+          this.snackbar = true;
         })
         .catch(e => {
-          alert(JSON.stringify(e.response))
+          this.snackbar_text = e.response.data.message;
+          this.snackbar = true;
         })
         .finally(() => {
+          this.getData();
           this.disabled = false
         })
     },
     updateStatus() {
       if(this.item.status == 2) {
         this.kontrak_dialog = true
+      } else {
+        this.updateData()
       }
     },
     kontrakSave(){

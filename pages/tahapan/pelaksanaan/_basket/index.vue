@@ -44,6 +44,9 @@
       <template v-slot:item.progress="{ item }">
         {{ item.progress }}%
       </template>
+      <template v-slot:item.type="{ item }">
+        {{ item.type == 1 ? 'MURNI' : 'LUNCURAN' }}
+      </template>
     </v-data-table>
   </v-card>
 </div>
@@ -98,6 +101,10 @@ export default {
         {
           text: 'Progress',
           value: 'progress',
+        },
+        {
+          text: 'Tipe',
+          value: 'type',
         }
       ]
     }

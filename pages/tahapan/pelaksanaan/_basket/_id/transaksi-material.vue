@@ -4,29 +4,49 @@
     <page-title :item="page_title" />
 
     <div class="mb-5">
-      <pelaksanaan-navbar active="transaksi-material" :has-permission="hasPermission"/>
+      <pelaksanaan-navbar active="transaksi-material" :has-permission="hasPermission" />
 
       <v-card elevation="4" class="rounded-lg">
-        <v-card-title>
-          <v-text-field style="max-width: 300px" class="rounded-lg" dense outlined v-model="search" append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
-          <v-spacer></v-spacer>
-          <v-btn v-if="hasPermission" dark color="light-blue" elevation="0" @click="returBaru" class="me-2 rounded-lg">
-            RETUR
-          </v-btn>
-          <v-btn v-if="hasPermission" dark color="red" elevation="0" @click="reservasiBaru" class="rounded-lg">
-            RESERVASI
-          </v-btn>
-        </v-card-title>
-        <v-card-title>
-          <v-text-field outlined hide-details="auto" dense label="Total WBS Jasa" readonly
-            :value="'Rp'+new Intl.NumberFormat('id-ID').format(wbs_stats.total)" class="me-sm-2 mb-3 mb-lg-0 rounded-lg">
-          </v-text-field>
-          <v-text-field :error="wbs_stats.used < 0" outlined hide-details="auto" dense label="Digunakan WBS Jasa"
-            readonly :value="'Rp'+new Intl.NumberFormat('id-ID').format(wbs_stats.used)" class="me-lg-2 mb-3 mb-lg-0 rounded-lg">
-          </v-text-field>
-          <v-text-field :error="wbs_stats.rest < 0" outlined hide-details="auto" class="rounded-lg" dense label="Sisa WBS Jasa" readonly
-            :value="'Rp'+new Intl.NumberFormat('id-ID').format(wbs_stats.rest)"></v-text-field>
-        </v-card-title>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12" md="6" class="d-none d-md-block">
+              <v-text-field style="max-width: 300px" class="mb-sm-0 rounded-lg" dense outlined v-model="search"
+                append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
+            </v-col>
+            <v-col cols="12" md="6" class="d-flex justify-end">
+              <v-btn v-if="hasPermission" dark color="light-blue" elevation="0" @click="returBaru"
+                class="me-2 rounded-lg">
+                RETUR
+              </v-btn>
+              <v-btn v-if="hasPermission" dark color="red" elevation="0" @click="reservasiBaru" class="rounded-lg">
+                RESERVASI
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-text>
+          <v-row>
+            <v-col cols="12" md="4">
+              <v-text-field outlined hide-details="auto" dense label="Total WBS Jasa" readonly
+                :value="'Rp'+new Intl.NumberFormat('id-ID').format(wbs_stats.total)" class="rounded-lg">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field :error="wbs_stats.used < 0" outlined hide-details="auto" dense label="Digunakan WBS Jasa"
+                readonly :value="'Rp'+new Intl.NumberFormat('id-ID').format(wbs_stats.used)" class="rounded-lg">
+              </v-text-field>
+            </v-col>
+            <v-col cols="12" md="4">
+              <v-text-field :error="wbs_stats.rest < 0" outlined hide-details="auto" class="rounded-lg" dense
+                label="Sisa WBS Jasa" readonly :value="'Rp'+new Intl.NumberFormat('id-ID').format(wbs_stats.rest)">
+              </v-text-field>
+            </v-col>
+          </v-row>
+        </v-card-text>
+        <v-card-text class="d-block d-md-none">
+          <v-text-field style="max-width: 350px" class="rounded-lg" dense outlined v-model="search"
+            append-icon="mdi-magnify" label="Cari" single-line hide-details></v-text-field>
+        </v-card-text>
         <v-data-table :headers="headers" :items="items" :items-per-page="5" class="elevation-0">
           <template v-slot:item.harga="{ item }">
             Rp{{ new Intl.NumberFormat('id-ID').format(item.harga) }}
@@ -60,18 +80,20 @@
           <v-card-text>
             <v-row>
               <v-col cols="12" sm="4">
-                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="TUG" v-model="tug" @change="setTug">
+                <v-text-field outlined class="rounded-lg" hide-details="auto" :error="error_tug" :error-messages="error_tug ? 'TUG tidak boleh kosong' : null" dense label="TUG" v-model="tug"
+                  @change="setTug">
                 </v-text-field>
               </v-col>
               <v-col cols="12" sm="4">
-                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="Tanggal" v-model="tanggal" @change="setTanggal"
-                  type="date"></v-text-field>
+                <v-text-field outlined class="rounded-lg" hide-details="auto" :error="error_tanggal" :error-messages="error_tanggal ? 'Tanggal tidak boleh kosong' : null" dense label="Tanggal" v-model="tanggal"
+                  @change="setTanggal" type="date"></v-text-field>
               </v-col>
             </v-row>
             <v-row>
-              <v-col cols="12" sm="auto" lg="5">
-                <v-autocomplete outlined class="rounded-lg" hide-details="auto" dense label="Nama Material" v-model="create_data[0].id"
-                  :items="material_options" item-text="nama_material" item-value="id" @change="getMaterialDetail(0)">
+              <v-col cols="12" sm="6" lg="5">
+                <v-autocomplete outlined class="rounded-lg" hide-details="auto" dense label="Nama Material"
+                  v-model="create_data[0].id" :items="material_options" item-text="nama_material" item-value="id"
+                  @change="getMaterialDetail(0)">
                   <template v-slot:item="data">
                     <template>
                       <v-list-item-content>
@@ -83,28 +105,29 @@
                   </template>
                 </v-autocomplete>
               </v-col>
-              <v-col cols="12" sm="auto" lg="2">
-                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="Harga" prefix="Rp" type="number"
-                  v-model="create_data[0].harga" readonly @change="getMaterialDetail(0)"></v-text-field>
+              <v-col cols="12" sm="6" lg="2">
+                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="Harga" prefix="Rp"
+                  type="number" v-model="create_data[0].harga" readonly @change="getMaterialDetail(0)"></v-text-field>
               </v-col>
-              <v-col cols="12" sm="auto" lg="2">
-                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="Satuan" v-model="create_data[0].satuan"
-                  readonly></v-text-field>
+              <v-col cols="12" sm="5" lg="2">
+                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="Satuan"
+                  v-model="create_data[0].satuan" readonly></v-text-field>
               </v-col>
-              <v-col cols="12" sm="auto" lg="2">
-                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="Jumlah" v-model="create_data[0].jumlah"
-                  type="number"></v-text-field>
+              <v-col cols="12" sm="5" lg="2">
+                <v-text-field outlined class="rounded-lg" hide-details="auto" dense label="Jumlah"
+                  v-model="create_data[0].jumlah" type="number"></v-text-field>
               </v-col>
-              <v-col cols="auto" class="d-none d-sm-block">
+              <v-col cols="auto" sm="2" lg="1" class="d-none d-sm-block">
                 <v-btn dark text class="rounded-lg" @click="clearCreateData(0)">
                   <v-icon color="red">mdi-delete</v-icon>
                 </v-btn>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="d-none d-lg-flex">
               <v-col cols="12" sm="auto" lg="5">
-                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material" v-model="create_data[1].id"
-                  :items="material_options" item-text="nama_material" item-value="id" @change="getMaterialDetail(1)">
+                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material"
+                  v-model="create_data[1].id" :items="material_options" item-text="nama_material" item-value="id"
+                  @change="getMaterialDetail(1)">
                   <template v-slot:item="data">
                     <template>
                       <v-list-item-content>
@@ -117,16 +140,16 @@
                 </v-autocomplete>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp" type="number"
-                  v-model="create_data[1].harga" readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp"
+                  type="number" v-model="create_data[1].harga" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan" v-model="create_data[1].satuan"
-                  readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan"
+                  v-model="create_data[1].satuan" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah" v-model="create_data[1].jumlah"
-                  type="number"></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah"
+                  v-model="create_data[1].jumlah" type="number"></v-text-field>
               </v-col>
               <v-col cols="auto" class="d-none d-sm-block">
                 <v-btn dark class="rounded-lg" text @click="clearCreateData(1)">
@@ -134,10 +157,11 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="d-none d-lg-flex">
               <v-col cols="12" sm="auto" lg="5">
-                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material" v-model="create_data[2].id"
-                  :items="material_options" item-text="nama_material" item-value="id" @change="getMaterialDetail(2)">
+                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material"
+                  v-model="create_data[2].id" :items="material_options" item-text="nama_material" item-value="id"
+                  @change="getMaterialDetail(2)">
                   <template v-slot:item="data">
                     <template>
                       <v-list-item-content>
@@ -150,16 +174,16 @@
                 </v-autocomplete>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp" type="number"
-                  v-model="create_data[2].harga" readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp"
+                  type="number" v-model="create_data[2].harga" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan" v-model="create_data[2].satuan"
-                  readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan"
+                  v-model="create_data[2].satuan" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah" v-model="create_data[2].jumlah"
-                  type="number"></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah"
+                  v-model="create_data[2].jumlah" type="number"></v-text-field>
               </v-col>
               <v-col cols="auto" class="d-none d-sm-block">
                 <v-btn dark class="rounded-lg" text @click="clearCreateData(2)">
@@ -167,10 +191,11 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="d-none d-lg-flex">
               <v-col cols="12" sm="auto" lg="5">
-                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material" v-model="create_data[3].id"
-                  :items="material_options" item-text="nama_material" item-value="id" @change="getMaterialDetail(3)">
+                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material"
+                  v-model="create_data[3].id" :items="material_options" item-text="nama_material" item-value="id"
+                  @change="getMaterialDetail(3)">
                   <template v-slot:item="data">
                     <template>
                       <v-list-item-content>
@@ -183,16 +208,16 @@
                 </v-autocomplete>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp" type="number"
-                  v-model="create_data[3].harga" readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp"
+                  type="number" v-model="create_data[3].harga" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan" v-model="create_data[3].satuan"
-                  readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan"
+                  v-model="create_data[3].satuan" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah" v-model="create_data[3].jumlah"
-                  type="number"></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah"
+                  v-model="create_data[3].jumlah" type="number"></v-text-field>
               </v-col>
               <v-col cols="auto" class="d-none d-sm-block">
                 <v-btn dark class="rounded-lg" text @click="clearCreateData(3)">
@@ -200,10 +225,11 @@
                 </v-btn>
               </v-col>
             </v-row>
-            <v-row>
+            <v-row class="d-none d-lg-flex">
               <v-col cols="12" sm="auto" lg="5">
-                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material" v-model="create_data[4].id"
-                  :items="material_options" item-text="nama_material" item-value="id" @change="getMaterialDetail(4)">
+                <v-autocomplete class="rounded-lg" outlined hide-details="auto" dense label="Nama Material"
+                  v-model="create_data[4].id" :items="material_options" item-text="nama_material" item-value="id"
+                  @change="getMaterialDetail(4)">
                   <template v-slot:item="data">
                     <template>
                       <v-list-item-content>
@@ -216,16 +242,16 @@
                 </v-autocomplete>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp" type="number"
-                  v-model="create_data[4].harga" readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Harga" prefix="Rp"
+                  type="number" v-model="create_data[4].harga" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan" v-model="create_data[4].satuan"
-                  readonly></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Satuan"
+                  v-model="create_data[4].satuan" readonly></v-text-field>
               </v-col>
               <v-col cols="12" sm="auto" lg="2">
-                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah" v-model="create_data[4].jumlah"
-                  type="number"></v-text-field>
+                <v-text-field class="rounded-lg" outlined hide-details="auto" dense label="Jumlah"
+                  v-model="create_data[4].jumlah" type="number"></v-text-field>
               </v-col>
               <v-col cols="auto" class="d-none d-sm-block">
                 <v-btn dark class="rounded-lg" text @click="clearCreateData(4)">
@@ -255,8 +281,8 @@
             Material
           </v-card-title>
           <v-card-text>
-            <v-text-field outlined hide-details="auto" dense label="TUG" :disabled="disabled" v-model="edit_data.tug"
-              readonly class="mb-3 rounded-lg"></v-text-field>
+            <v-text-field outlined hide-details="auto" dense label="TUG" :disabled="disabled" v-model="edit_data.tug" readonly
+              class="mb-3 rounded-lg"></v-text-field>
             <v-text-field outlined hide-details="auto" dense label="Tanggal" v-model="edit_data.tanggal" readonly
               type="date" class="mb-3 rounded-lg"></v-text-field>
             <v-text-field outlined hide-details="auto" dense label="Nama Material" :disabled="disabled"
@@ -326,7 +352,7 @@
         page_title: {},
 
         search: '',
-        
+
         items: [],
         create_dialog: false,
         edit_dialog: false,
@@ -341,6 +367,8 @@
           used: 0,
           rest: 0
         },
+        error_tug: false,
+        error_tanggal: false,
         create_data: [{
             id: '',
             tug: '',
@@ -393,7 +421,8 @@
           },
         ],
         pelaksanan: {},
-        tug: ''
+        tug: '',
+        tanggal: ''
       }
     },
     created() {
@@ -574,6 +603,14 @@
         this.create_dialog = false
       },
       createSave() {
+        if (!this.tug) {
+          this.error_tug = true;
+          return;
+        }
+        if (!this.tanggal) {
+          this.error_tanggal = true;
+          return;
+        }
         let id = this.$route.params.id
         let data = this.create_data;
         this.disabled = true;
@@ -585,6 +622,7 @@
           })
           .finally(() => {
             this.disabled = false;
+            this.error_tug = true;
           })
       },
       clearCreateData(row) {
@@ -628,10 +666,11 @@
     },
     computed: {
       hasPermission() {
-        return this.$auth.user.permissions.includes('edit-pelaksanaan') || this.$auth.user.permissions.includes('superadmin');
+        return this.$auth.user.permissions.includes('edit-pelaksanaan') || this.$auth.user.permissions.includes(
+          'superadmin');
       },
       headers() {
-        let headers= [{
+        let headers = [{
             text: 'TUG',
             value: 'tug',
           },
@@ -661,7 +700,7 @@
           }
         ];
 
-        if(this.hasPermission) {
+        if (this.hasPermission) {
           headers.push({
             text: '',
             sortable: false,

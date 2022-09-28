@@ -37,6 +37,9 @@
         <template v-slot:item.status="{ item }">
           {{ parseStatus(item.status) }}
         </template>
+        <template v-slot:item.type="{ item }">
+          {{ item.type == 1 ? 'MURNI' : 'LUNCURAN' }}
+        </template>
       </v-data-table>
     </v-card>
   </div>
@@ -91,6 +94,10 @@
           {
             text: 'Status',
             value: 'status',
+          },
+          {
+            text: 'Tipe',
+            value: 'type',
           },
         ]
       }

@@ -20,7 +20,7 @@
         <v-card-text>
           <v-text-field label="Nama" v-model="add_admin_data.nama" :error="add_admin_error.nama" dense outlined hide-details="auto" class="rounded-lg mb-3"></v-text-field>
           <v-text-field label="Email" v-model="add_admin_data.email"  :error="add_admin_error.email" dense outlined hide-details="auto" class="rounded-lg mb-3"></v-text-field>
-          <v-text-field label="Password" v-model="add_admin_data.password" :error="add_admin_error.password" dense outlined hide-details="auto" class="rounded-lg mb-3"></v-text-field>
+          <v-text-field label="Password" :append-icon="password_show ? 'mdi-eye' : 'mdi-eye-off'" :type="password_show ? 'text' : 'password'" v-model="add_admin_data.password" @click:append="password_show = !password_show" :error="add_admin_error.password" dense outlined hide-details="auto" class="rounded-lg mb-3"></v-text-field>
           <v-select label="Hak Akses" v-model="add_admin_data.permissions" :items="permission_options"  multiple chips outlined
             item-text="permission" item-value="permission" class="rounded-lg" hide-details="auto"></v-select>
         </v-card-text>
@@ -44,7 +44,7 @@
           Update Password {{ update_admin_password_data.user.nama }}
         </v-card-title>
         <v-card-text>
-          <v-text-field label="Password Baru" v-model="update_admin_password_data.password" :error="update_admin_password_error.password" dense outlined hide-details="auto" class="rounded-lg mb-3"></v-text-field>
+          <v-text-field label="Password Baru" :append-icon="password_show ? 'mdi-eye' : 'mdi-eye-off'" :type="password_show ? 'text' : 'password'" @click:append="password_show = !password_show" v-model="update_admin_password_data.password" :error="update_admin_password_error.password" dense outlined hide-details="auto" class="rounded-lg mb-3"></v-text-field>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -223,7 +223,9 @@
         },
 
         snackbar: false,
-        snackbar_text: ''
+        snackbar_text: '',
+
+        password_show: false
       }
     },
     mounted() {

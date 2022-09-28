@@ -71,9 +71,6 @@ export default {
           property: 'access_token',
           maxAge: 60 * 60
         },
-        refreshToken: {
-          maxAge: 20160 * 60
-        },
       }
     }
   },
@@ -129,4 +126,10 @@ export default {
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   },
+
+  loadingIndicator: {
+    name: 'rotating-plane',
+    color: 'light-blue',
+    background: 'white'
+  }
 }

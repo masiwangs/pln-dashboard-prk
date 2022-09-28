@@ -260,7 +260,7 @@ export default {
     }
   },
   mounted() {
-    this.$axios.get(`/stats?basket=${this.$route.params.basket}`)
+    this.$axios.get(`/v1/stats?basket=${this.$route.params.basket}`)
       .then(res => {
         this.stats = res.data.data;
 

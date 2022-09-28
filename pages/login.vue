@@ -28,6 +28,7 @@
           type="email"
           class="mb-3 rounded-lg"
           v-model="login_data.email"
+          :disabled="is_fetching"
           :error="login_error.email"
           :error-messages="login_error.email"
         ></v-text-field>
@@ -39,6 +40,7 @@
           type="password"
           class="mb-10 rounded-lg"
           v-model="login_data.password"
+          :disabled="is_fetching"
           :error="login_error.password"
           :error-messages="login_error.password"
           @keyup.enter="login"
@@ -49,6 +51,7 @@
           color="light-blue"
           block
           @click="login"
+          :loading="is_fetching"
           class="mb-3 rounded-lg"
         >MASUK</v-btn>
         <div class="text-center">
@@ -77,11 +80,16 @@
 
         snackbar: false,
         snackbar_text: '',
-        snackbar_timeout: 2000
+        snackbar_timeout: 2000,
+
+        is_fetching: false
       }
     },
     methods: {
       login () {
+        if(this.is_fetching) return;
+
+        this.is_fetching = true;
         this.$auth.loginWith('laravelJWT', { data: this.login_data })
           .then(res => {
             this.$auth.setUser(res.data.user)
@@ -91,6 +99,9 @@
             this.snackbar_text = 'Email / password salah. Coba lagi.';
             this.snackbar = true;
             console.log(e)
+          })
+          .finally(() => {
+            this.is_fetching = false;
           })
       }
     }

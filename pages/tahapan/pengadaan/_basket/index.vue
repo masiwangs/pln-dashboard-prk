@@ -53,6 +53,9 @@
           {{ item.nodin }}
         </nuxt-link>
       </template>
+      <template v-slot:item.type="{ item }">
+        {{ item.type == 1 ? 'MURNI' : 'LUNCURAN' }}
+      </template>
       <template v-slot:item.rab_j="{ item }">
         Rp{{ item.wbs_jasa ? new Intl.NumberFormat('id-ID').format(item.wbs_jasa.total) : 0 }}
       </template>
@@ -171,12 +174,12 @@ export default {
         {
           text: 'Tahapan',
           disabled: false,
-          href: '/tahapan',
+          href: '/',
         },
         {
           text: 'PENGADAAN',
           disabled: true,
-          href: 'breadcrumbs_link_2',
+          href: '/tahapan/pengadaan/1',
         },
       ],
 
@@ -198,6 +201,10 @@ export default {
           text: 'Nama Project',
           align: 'start',
           value: 'nama_project',
+        },
+        {
+          text: 'Tipe',
+          value: 'type',
         },
         {
           text: 'RAB Jasa',
